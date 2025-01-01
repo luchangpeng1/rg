@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>软件工程考试信息</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 60px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #2196F3;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .exam-type {
+            margin-bottom: 20px;
+        }
+
+        .exam-type h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .exam-type-list p {
+            color: #666;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .exam-type-list p strong {
+            color: #2196F3;
+            margin-right: 10px;
+        }
+
+        .exam-sub-list {
+            list-style: none;
+            margin-left: 30px;
+            margin-top: -5px;
+        }
+
+        .exam-sub-list li {
+            color: #666;
+            font-size: 1rem;
+            padding: 4px 15px;
+            position: relative;
+        }
+
+        .exam-sub-list li::before {
+            content: "•";
+            color: #2196F3;
+            position: absolute;
+            left: 0;
+        }
+
+        .exam-note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .exam-note p {
+            color: #2e7d32;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .key-points {
+            list-style: none;
+        }
+
+        .key-points li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .key-points li::before {
+            content: "•";
+            color: #2196F3;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .key-points li strong {
+            color: #2196F3;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .key-points ul {
+            list-style: none;
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .key-points ul li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2196F3;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #1976D2;
+        }
+
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            }
+
+            .section {
+                background-color: #333;
+            }
+
+            .header h1 {
+                color: #fff;
+            }
+
+            .section h2 {
+                color: #64B5F6;
+            }
+
+            .exam-type h3 {
+                color: #81C784;
+            }
+
+            .exam-type-list p {
+                background: #424242;
+                color: #ccc;
+            }
+
+            .exam-note {
+                background: #1b5e20;
+            }
+
+            .exam-note p {
+                color: #a5d6a7;
+            }
+
+            .key-points li strong {
+                color: #64B5F6;
+            }
+
+            .key-points ul li {
+                color: #ccc;
+            }
+
+            .exam-sub-list li {
+                color: #ccc;
+            }
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                padding-top: 40px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .back-button {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">返回首页 →</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>软件工程考试信息</h1>
+        </div>
+
+        <div class="section">
+            <h2>题型分布</h2>
+            <div class="exam-type">
+                <h3>考试题型及分值</h3>
+                <div class="exam-type-list">
+                    <p><strong>一、选择题：</strong>20分（10题，每题2分）</p>
+                    <p><strong>二、判断题：</strong>10分（10题，每题1分）</p>
+                    <p><strong>三、简答题：</strong>35分（7题，每题5分）</p>
+                    <p><strong>四、应用题：</strong>20分（2题，每题10分）</p>
+                    <p><strong>五、测试题：</strong>15分（1题）</p>
+                </div>
+                <div class="exam-note">
+                    <p>总分：100分</p>
+                    <p>考试时间：120分钟</p>
+                    <p>重点章节：12、13章考察内容较多</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>考试重点</h2>
+            <ul class="key-points">
+                <li><strong>题目来源：</strong>
+                    <ul>
+                        <li>选择题和判断题均来自课后习题</li>
+                        <li>简答题来自课后思考题</li>
+                        <li>作业题类似平时作业题目</li>
+                    </ul>
+                </li>
+                <li><strong>重点关注：</strong>
+                    <ul>
+                        <li>12、13章的内容（考察比重大）</li>
+                        <li>课后习题</li>
+                        <li>平时作业题型</li>
+                    </ul>
+                </li>
+                <li><strong>复习建议：</strong>
+                    <ul>
+                        <li>重点复习12、13章节内容</li>
+                        <li>认真完成并理解所有课后习题</li>
+                        <li>复习作业中的典型题目</li>
+                        <li>掌握软件测试相关内容（对应15分测试题）</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
