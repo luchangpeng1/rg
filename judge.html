@@ -23,20 +23,52 @@
         /* 头部样式 */
         .header {
             background: #1a73e8;
-            padding: 15px 20px;
-            position: sticky;
+            padding: 30px 20px 15px 20px !important;
+            position: fixed;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            left: 0;
+            right: 0;
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .back-button {
-            color: white;
+            position: absolute !important;
+            right: 5px !important;
+            top: 10px !important;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px;
+            padding: 4px 8px !important;
             text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1;
+            transition: all 0.3s ease !important;
+        }
+
+        .back-button:hover {
+            background-color: #1976D2 !important;
+        }
+
+        .chapter-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
         }
 
         /* 主容器样式 */
@@ -201,56 +233,23 @@
         /* 移动端适配 */
         @media (max-width: 768px) {
             .header {
-                padding: 10px 15px;
+                padding: 25px 20px 12px 20px !important;
             }
-
-            .container {
-                position: relative;
-                padding: 0;
+            
+            .chapter-indicator {
+                font-size: 1rem;
+                padding: 0 10px;
+                top: 8px;
             }
-
-            .nav-sidebar {
-                position: fixed;
-                left: -280px;
-                top: 0;
-                bottom: 0;
-                width: 280px;
-                height: 100%;
-            }
-
-            .chapter-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .chapter-item {
-                flex: 1;
-                min-width: 140px;
-                text-align: center;
-                padding: 10px;
-                margin: 0;
-            }
-
-            .question-card {
-                padding: 20px;
-            }
-
-            .options-group {
-                flex-direction: column;
-            }
-
-            .option-button {
-                max-width: none;
-            }
-
-            .content-area {
-                width: 100%;
-                padding: 15px;
+            
+            .back-button {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
             }
         }
 
-        /* 深色模式适配 */
+        /* 暗色模式支持 */
         @media (prefers-color-scheme: dark) {
             body {
                 background-color: #1a1a1a;
@@ -479,7 +478,8 @@
 </head>
 <body>
     <div class="header">
-        <a href="index.html" class="back-button">返回主页</a>
+        <div class="chapter-indicator" id="chapterIndicator"></div>
+        <a href="index.html" class="back-button">返回首页 →</a>
     </div>
     
     <div class="overlay" id="overlay"></div>
@@ -498,7 +498,6 @@
 
         <!-- 右侧内容区 -->
         <main class="content-area" id="contentArea">
-            <h2 id="currentChapter">请选择章节</h2>
             <div class="counter-section">
                 <span>总题数: <span id="totalQuestions">0</span></span>
                 <span>已答题: <span id="correctAnswers">0</span></span>
@@ -623,8 +622,12 @@
 
         // 显示章节题目
         function showChapterQuestions(chapter, toggleMenuOnMobile = true) {
-            // 更新章节标题
-            document.getElementById('currentChapter').textContent = chapter;
+            // 获取章节序号
+            const chapterNum = chapter.match(/第(\d+)章/)?.[1] || '';
+            
+            // 更新顶部章节指示器
+            const chapterIndicator = document.getElementById('chapterIndicator');
+            chapterIndicator.textContent = `${chapter} 判断题`;
             
             // 更新章节选中状态
             document.querySelectorAll('.chapter-item').forEach(item => {
@@ -664,7 +667,8 @@
 
         // 检查答案
         function checkAnswer(index, userAnswer) {
-            const chapter = document.getElementById('currentChapter').textContent;
+            // 从章节指示器获取当前章节
+            const chapter = document.getElementById('chapterIndicator').textContent.replace(' 判断题', '');
             const question = questions[chapter][index];
             const answerSection = document.getElementById(`answer-${index}`);
             const optionsGroup = answerSection.previousElementSibling;
