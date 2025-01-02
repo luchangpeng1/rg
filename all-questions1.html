@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>全部简答题 - 软件工程复习</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            line-height: 1.6;
+            color: #2c3e50;
+            padding-top: 70px;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
+        }
+
+        .back-button:hover {
+            background-color: #1557b0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chapter-section {
+            margin: 30px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .chapter-title {
+            color: #1a73e8;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .question-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .answer {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #34a853;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #2c3e50;
+            white-space: pre-wrap;
+        }
+
+        .toggle-button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-button:hover {
+            background: #1557b0;
+        }
+
+        .toggle-all-button {
+            background: #34a853;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 20px 0;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-all-button:hover {
+            background: #2d8e47;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #e0e0e0;
+            }
+
+            .chapter-section {
+                background: #2d2d2d;
+            }
+
+            .question-item {
+                background: #333;
+            }
+
+            .answer {
+                background: #2d2d2d;
+                color: #e0e0e0;
+                border-left-color: #34a853;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .chapter-section {
+                padding: 15px;
+            }
+
+            .back-button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            body {
+                padding-top: 60px;
+            }
+        }
+
+        .answer-section {
+            margin: 10px 0;
+        }
+
+        .answer-section-title {
+            font-weight: 600;
+            color: #1a73e8;
+            margin-bottom: 8px;
+        }
+
+        .answer-point {
+            margin-left: 20px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .answer-point:before {
+            content: "•";
+            position: absolute;
+            left: -15px;
+            color: #666;
+        }
+
+        .answer-section-title {
+            color: #4a9eff;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            width: fit-content;
+            align-items: center;
+        }
+
+        .toggle-button, .diagram-button {
+            width: 120px;
+            height: 36px;
+            padding: 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .toggle-button {
+            background: #34a853;
+            color: white;
+        }
+
+        .toggle-button:hover {
+            background: #2d8e47;
+        }
+
+        .diagram-button {
+            background: #4285f4;
+            color: white;
+        }
+
+        .diagram-button:hover {
+            background: #3367d6;
+        }
+
+        .random-button {
+            background: #fb8c00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(251, 140, 0, 0.2);
+        }
+
+        .random-button:hover {
+            background: #f57c00;
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-button:hover {
+            color: #000;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .modal-content {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+            }
+            
+            .close-button {
+                color: #e0e0e0;
+            }
+            
+            .close-button:hover {
+                color: #fff;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .random-button {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        .word-count-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .word-count-switch input {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            appearance: none;
+            background: #ddd;
+            border-radius: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .word-count-switch input:checked {
+            background: #34a853;
+        }
+
+        .word-count-switch input:before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .word-count-switch input:checked:before {
+            left: 22px;
+        }
+
+        .switch-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .word-count {
+            transition: opacity 0.3s;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .word-count-switch input {
+                background: #666;
+            }
+            .switch-label {
+                color: #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">返回主页</a>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px;">
+        <h1 style="margin: 0;">全部简答题</h1>
+        <button id="randomQuestionBtn" class="random-button">随机一题</button>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0;">
+        <div id="total-word-count" style="color: #666;">总字数：计算中...</div>
+        <label class="word-count-switch">
+            <input type="checkbox" id="wordCountToggle" checked>
+            <span class="switch-label">显示题目字数</span>
+        </label>
+    </div>
+    
+    <button class="toggle-all-button" onclick="toggleAllAnswers()">显示/隐藏所有答案</button>
+
+    <div id="questions-container">
+        <!-- 问题将通过JavaScript动态加载 -->
+    </div>
+
+    <div id="randomQuestionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="modalQuestionTitle"></h3>
+            <div class="button-container">
+                <button id="showAnswerBtn" class="toggle-button">显示答案</button>
+                <button id="nextRandomBtn" class="random-button">下一题</button>
+            </div>
+            <div id="modalAnswer" class="answer"></div>
+        </div>
+    </div>
+
+    <script>
+        // 题目数据
+        const questions = [
+            {
+                chapter: "软件工程基础",
+                title: "1. 为什么说软件工程的发展可以在一定程度上解决软件危机的各种弊端?",
+                answer: "1. 规范化流程：建立标准开发流程，确保过程可控。\n2. 项目管理：科学管理方法控制成本和进度。\n3. 先进技术：使用面向对象等提高开发效率。\n4. 质量保证：通过评审和测试确保软件质量。\n5. 持续改进：不断优化流程提高团队效率。"
+            },
+            {
+                chapter: "软件工程基础",
+                title: "2. 请简述软件工程的基本原则",
+                answer: "1. 用分阶段的生命周期计划进行严格的项目管理。\n2. 坚持进行阶段评审。\n3. 实行严格的产品控制。\n4. 采用现代程序设计技术。\n5. 软件工程结果应能清楚地审查。\n6. 开发小组的人员应该少而精。"
+            },
+            {
+                chapter: "软件工程基础",
+                title: "3. 请简述软件工程的目标",
+                answer: "1. 达到要求的软件功能。\n2. 取得较好的软件性能。\n3. 开发出高质量的软件。\n4. 付出较低的开发成本。\n5. 需要较低的维护费用。\n6. 能按时完成开发工作，及时交付使用。"
+            },
+            {
+                chapter: "软件开发模型",
+                title: "4. 在统一软件开发过程模型中核心工作流程包含哪些?",
+                answer: "1. 需求分析：收集分析需求，形成规格说明。\n2. 系统设计：完成架构设计和详细设计。\n3. 编码实现：按设计规范编写程序和单元测试。\n4. 系统测试：执行集成和系统测试，验证功能。\n5. 部署维护：系统部署和持续维护优化。"
+            },
+            {
+                chapter: "软件开发模型",
+                title: "5. 当需求不明确且系统复杂时选用的开发模型",
+                answer: "1. 原型模型：快速构建原型明确需求，便于用户反馈和需求调整。\n2. 增量模型：分步实现功能，逐步适应需求变化。\n3. 螺旋模型：通过多次迭代和风险分析，逐步完善系统。\n4. 演化模型：在使用过程中持续改进，适应复杂系统开发。"
+            },
+            {
+                chapter: "软件生命周期",
+                title: "6. 软件生命周期的内在特征",
+                answer: "1. 阶段性：按照固定流程分为多个清晰的开发阶段。\n2. 迭代性：各阶段需要多次修改完善直至满足要求。\n3. 渐进性：系统功能随开发过程逐步实现和完善。\n4. 风险性：每个阶段都存在不确定因素需要管理。\n5. 可控性：通过项目管理和质量控制确保开发进度。"
+            },
+            {
+                chapter: "需求分析",
+                title: "7. 可行性研究的内容",
+                answer: "1. 战略可行性。\n2. 操作可行性。\n3. 计划可行性。\n4. 技术可行性。\n5. 社会可行性。\n6. 市场可行性。\n7. 经济可行性。\n8. 风险可行性。"
+            },
+            {
+                chapter: "需求分析",
+                title: "8. 如何理解需求分析的作用和重要性?",
+                answer: "1. 明确目标：确定系统功能范围\n2. 降低风险：避免后期大改动\n3. 指导开发：提供设计实现依据\n4. 控制范围：管理需求变更\n5. 保证质量：确保满足用户需要"
+            },
+            {
+                chapter: "软件设计",
+                title: "9. 为什么说'高内聚、低耦合'的设计有利于提高系统的独立性?",
+                answer: "1. 内聚性：模块功能单一，内部关系紧密\n2. 低依赖：模块间接口简单，相互依赖少\n3. 易维护：修改影响范围小，问题容易定位\n4. 可重用：独立性强的模块易于复用\n5. 易测试：功能独立便于单元测试"
+            },
+            {
+                chapter: "需求分析",
+                title: "10. 请简述数据字典的作用",
+                answer: "1. 统一定义：规范数据元素描述\n2. 促进交流：保持团队理解一致\n3. 完整记录：记录数据格式和约束\n4. 避免重复：消除数据冗余\n5. 维护参考：提供数据结构依据"
+            },
+            {
+                chapter: "需求分析",
+                title: "11. 请简述数据流图的作用",
+                answer: "1. 描述数据流动和处理过程\n2. 帮助理解系统数据处理需求\n3. 分解复杂系统为功能模块\n4. 作为用户沟通的工具\n5. 为系统设计提供依据"
+            },
+            {
+                chapter: "面向对象分析",
+                title: "12. 请简述面向对象分析的过程",
+                answer: "1. 识别对象：找出系统中的主要对象\n2. 确定属性：分析对象的特征和行为\n3. 建立关系：定义对象间的关联方式\n4. 验证模型：检查是否满足需求"
+            },
+            {
+                chapter: "面向对象分析",
+                title: "13. 如何画出用例图",
+                answer: "1. 识别角色：确定系统用户\n2. 定义用例：识别系统功能\n3. 建立关系：确定角色和用例关联\n4. 添加描述：说明用例流程\n5. 规范表示：使用UML符号"
+            },
+            {
+                chapter: "面向对象分析",
+                title: "14. 类间的外部关系类型及其语义",
+                answer: "1. 依赖关系：临时使用关系\n2. 关联关系：结构性连接\n3. 泛化关系：继承关系\n4. 实现关系：接口实现\n5. 组合关系：整体部分关系"
+            },
+            {
+                chapter: "软件架构",
+                title: "15. 软件体系结构的作用体现在哪些方面？",
+                answer: "1. 系统蓝图：展示整体结构和组件关系\n2. 质量保证：确保系统性能和可靠性\n3. 指导开发：提供设计编码框架\n4. 支持重用：促进组件和模式复用\n5. 便于维护：清晰结构便于系统演化"
+            },
+            {
+                chapter: "编码规范",
+                title: "16. 请简述编码风格的重要性。要形成良好的编码风格可以从哪些方面做起？",
+                answer: "1. 命名规范：统一命名提高可读性\n2. 注释完整：说明复杂逻辑\n3. 格式统一：保持代码布局一致\n4. 错误处理：规范异常和日志\n5. 模块划分：合理组织代码结构"
+            },
+            {
+                chapter: "软件测试",
+                title: "17. 软件测试的常用模型有哪些,请简述它们的优缺点",
+                answer: "1. V模型：\n- 优点：测试与开发对应\n- 缺点：错误发现晚\n\n2. W模型：\n- 优点：并行测试早发现\n- 缺点：需按序执行\n\n3. H模型：\n- 优点：测试活动独立\n- 缺点：团队要求高"
+            },
+            {
+                chapter: "软件质量",
+                title: "18. 请简述McCall对软件质量的定义",
+                answer: "1. 产品运行\n- 正确性\n- 效率\n- 可靠性\n\n2. 产品修改\n- 可用性\n- 完整性\n- 可维护性\n\n3. 产品转移\n- 可测试性\n- 灵活性\n- 可移植性\n- 互适性\n- 可复用性"
+            },
+            {
+                chapter: "软件测试",
+                title: "19. 什么是调试？什么是测试？二者有何区别？",
+                answer: "1. 调试：\n- 定位和排除已知错误\n- 有明确目标的修正过程\n\n2. 测试：\n- 发现系统中的错误\n- 关注问题的表现症状\n\n3. 区别：\n- 测试是发现错误\n- 调试是修正错误"
+            },
+            {
+                chapter: "软件测试",
+                title: "20. 请简述静态测试和动态测试的区别",
+                answer: "1. 执行环境：\n- 静态测试无需运行\n- 动态测试需要运行\n\n2. 测试方法：\n- 静态靠代码审查\n- 动态靠运行观察\n\n3. 发现问题：\n- 静态找设计问题\n- 动态找运行缺陷\n\n4. 成本：\n- 静态成本低\n- 动态资源多"
+            }
+        ];
+
+        function createAnswerElement(answerText) {
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'answer';
+            
+            // 将答案文本按段落分割
+            const sections = answerText.split('\n\n');
+            
+            sections.forEach(section => {
+                if (section.trim()) {
+                    const lines = section.split('\n');
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'answer-section';
+                    
+                    lines.forEach((line, index) => {
+                        if (line.trim()) {
+                            if (line.includes(':') || line.endsWith(':') || /^\d+\./.test(line)) {
+                                // 这是一个标题行
+                                const title = document.createElement('div');
+                                title.className = 'answer-section-title';
+                                title.textContent = line;
+                                sectionDiv.appendChild(title);
+                            } else if (line.startsWith('-')) {
+                                // 这是一个要点
+                                const point = document.createElement('div');
+                                point.className = 'answer-point';
+                                point.textContent = line.substring(1).trim();
+                                sectionDiv.appendChild(point);
+                            } else {
+                                // 普通文本
+                                const text = document.createElement('div');
+                                text.textContent = line;
+                                sectionDiv.appendChild(text);
+                            }
+                        }
+                    });
+                    
+                    answerDiv.appendChild(sectionDiv);
+                }
+            });
+            
+            return answerDiv;
+        }
+
+        function createQuestionList() {
+            const container = document.getElementById('questions-container');
+            
+            questions.forEach((question, index) => {
+                const questionItem = document.createElement('div');
+                questionItem.className = 'question-item';
+                
+                const questionTitle = document.createElement('div');
+                questionTitle.className = 'question-title';
+                const wordCount = countChineseWords(question.answer);
+                questionTitle.innerHTML = `${question.title}<span class="word-count" style="color: #666; margin-left: 10px;">（答案字数：${wordCount}）</span>`;
+                
+                const answer = createAnswerElement(question.answer);
+                
+                const toggleButton = document.createElement('button');
+                toggleButton.className = 'toggle-button';
+                toggleButton.textContent = '显示答案';
+                toggleButton.onclick = () => {
+                    const isHidden = answer.style.display === 'none' || answer.style.display === '';
+                    answer.style.display = isHidden ? 'block' : 'none';
+                    toggleButton.textContent = isHidden ? '隐藏答案' : '显示答案';
+                };
+                
+                questionItem.appendChild(questionTitle);
+                questionItem.appendChild(answer);
+                questionItem.appendChild(toggleButton);
+                container.appendChild(questionItem);
+            });
+        }
+
+        function toggleAllAnswers() {
+            const answers = document.querySelectorAll('.answer');
+            const buttons = document.querySelectorAll('.toggle-button');
+            const firstAnswer = answers[0];
+            const isHidden = firstAnswer.style.display === 'none' || firstAnswer.style.display === '';
+            
+            answers.forEach(answer => {
+                answer.style.display = isHidden ? 'block' : 'none';
+            });
+            
+            buttons.forEach(button => {
+                button.textContent = isHidden ? '隐藏答案' : '显示答案';
+            });
+        }
+
+        function countChineseWords(text) {
+            // 移除所有换行符和空格
+            text = text.replace(/\n/g, '').replace(/\s/g, '');
+            // 移除标点符号
+            text = text.replace(/[.,，。:：、？?！!]/g, '');
+            return text.length;
+        }
+
+        function calculateTotalWordCount() {
+            const total = questions.reduce((sum, question) => {
+                return sum + countChineseWords(question.answer);
+            }, 0);
+            document.getElementById('total-word-count').textContent = `总字数：${total}`;
+        }
+
+        // 页面加载时初始化
+        window.onload = function() {
+            createQuestionList();
+            calculateTotalWordCount();
+            setupRandomQuestion();
+            setupWordCountToggle();
+        };
+
+        function setupRandomQuestion() {
+            const modal = document.getElementById('randomQuestionModal');
+            const closeBtn = document.getElementsByClassName('close-button')[0];
+            const randomBtn = document.getElementById('randomQuestionBtn');
+            const showAnswerBtn = document.getElementById('showAnswerBtn');
+            const nextRandomBtn = document.getElementById('nextRandomBtn');
+            const modalAnswer = document.getElementById('modalAnswer');
+
+            function showRandomQuestion() {
+                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+                document.getElementById('modalQuestionTitle').textContent = randomQuestion.title;
+                modalAnswer.innerHTML = '';
+                modalAnswer.appendChild(createAnswerElement(randomQuestion.answer));
+                modalAnswer.style.display = 'none';
+                showAnswerBtn.textContent = '显示答案';
+                modal.style.display = 'block';
+            }
+
+            randomBtn.onclick = showRandomQuestion;
+            nextRandomBtn.onclick = showRandomQuestion;
+            
+            showAnswerBtn.onclick = function() {
+                const isHidden = modalAnswer.style.display === 'none';
+                modalAnswer.style.display = isHidden ? 'block' : 'none';
+                showAnswerBtn.textContent = isHidden ? '隐藏答案' : '显示答案';
+            };
+
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        function setupWordCountToggle() {
+            const toggle = document.getElementById('wordCountToggle');
+            const wordCounts = document.getElementsByClassName('word-count');
+            
+            toggle.onchange = function() {
+                Array.from(wordCounts).forEach(count => {
+                    count.style.opacity = this.checked ? '1' : '0';
+                });
+                // 保存用户偏好
+                localStorage.setItem('showWordCount', this.checked);
+            };
+
+            // 加载用户偏好
+            const savedPreference = localStorage.getItem('showWordCount');
+            if (savedPreference !== null) {
+                toggle.checked = savedPreference === 'true';
+                toggle.onchange();
+            }
+        }
+    </script>
+</body>
+</html> 
