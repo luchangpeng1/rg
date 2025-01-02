@@ -571,6 +571,60 @@
                 background: rgba(244, 67, 54, 0.2);
             }
         }
+
+        /* 修改错题序号的样式 */
+        .wrong-questions-list {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            padding: 8px;
+            font-size: 0.8rem;
+            z-index: 1000;  /* 提高 z-index 确保显示在最上层 */
+            max-width: 200px;
+            white-space: normal;
+            word-wrap: break-word;
+            left: 100%;  /* 添加位置定位 */
+            top: 0;      /* 添加位置定位 */
+            margin-left: 5px;  /* 与错题数量保持一定距离 */
+        }
+
+        .chapter-wrong-count {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;  /* 确保容器大小正确 */
+        }
+
+        /* 添加一个小箭头指示器 */
+        .chapter-wrong-count::after {
+            content: " ↗";  /* 添加一个箭头表示可以查看更多信息 */
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .chapter-wrong-count:hover .wrong-questions-list {
+            display: block;
+        }
+
+        /* 确保在移动端也能正确显示 */
+        @media screen and (max-width: 768px) {
+            .wrong-questions-list {
+                left: auto;
+                right: 100%;
+                margin-left: 0;
+                margin-right: 5px;
+            }
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .wrong-questions-list {
+                background: #2d2d2d;
+                border-color: rgba(244, 67, 54, 0.3);
+                color: #e0e0e0;  /* 确保文字在暗色模式下可见 */
+            }
+        }
     </style>
     <script src="./loadQuestions.js"></script>
 </head>
@@ -642,7 +696,7 @@
             Object.keys(questionsData).forEach(chapterId => {
                 if (questionsData[chapterId] && questionsData[chapterId].length > 0) {
                     const li = document.createElement('li');
-                    const progress = userAnswers.chapterProgress[chapterId] || { answered: 0, correct: 0 };
+                    const progress = userAnswers.chapterProgress[chapterId] || { answered: 0, correct: 0, wrongQuestions: [] };
                     const total = questionsData[chapterId].length;
                     const wrongCount = progress.answered - progress.correct;
                     
@@ -651,7 +705,14 @@
                             <span>${chapterTitles[chapterId] || chapterId}</span>
                             ${progress.answered > 0 ? `
                                 <span class="chapter-progress">${progress.answered}/${total}</span>
-                                ${wrongCount > 0 ? `<span class="chapter-wrong-count">错题: ${wrongCount}</span>` : ''}
+                                ${wrongCount > 0 ? `
+                                    <span class="chapter-wrong-count">
+                                        错题: ${wrongCount}
+                                        <div class="wrong-questions-list">
+                                            错题序号: ${progress.wrongQuestions.join(', ')}
+                                        </div>
+                                    </span>
+                                ` : ''}
                             ` : ''}
                         </a>
                     `;
@@ -870,7 +931,7 @@
             
             // 获取当前选项的序号（A、B、C、D）
             const optionIndex = optionElement.dataset.index;
-            const selectedAnswer = String.fromCharCode(65 + parseInt(optionIndex)); // 将数字转换为对应的字母
+            const selectedAnswer = String.fromCharCode(65 + parseInt(optionIndex));
             
             // 显示正确答案
             answerDiv.style.display = 'block';
@@ -889,22 +950,27 @@
             userAnswers.answered++;
             document.getElementById('answeredQuestions').textContent = userAnswers.answered;
             
-            if (selectedAnswer === correctAnswer) {
-                userAnswers.correct++;
-                document.getElementById('correctAnswers').textContent = userAnswers.correct;
-            }
-            
             // 更新章节进度
             const chapter = document.querySelector('.chapter-indicator').textContent.split(' ')[0];
             if (!userAnswers.chapterProgress[chapter]) {
                 userAnswers.chapterProgress[chapter] = {
                     answered: 0,
-                    correct: 0
+                    correct: 0,
+                    wrongQuestions: []
                 };
             }
+            
             userAnswers.chapterProgress[chapter].answered++;
+            
             if (selectedAnswer === correctAnswer) {
+                userAnswers.correct++;
                 userAnswers.chapterProgress[chapter].correct++;
+                document.getElementById('correctAnswers').textContent = userAnswers.correct;
+            } else {
+                // 记录错题序号，确保不重复添加
+                if (!userAnswers.chapterProgress[chapter].wrongQuestions.includes(questionIndex + 1)) {
+                    userAnswers.chapterProgress[chapter].wrongQuestions.push(questionIndex + 1);
+                }
             }
             
             // 更新导航栏显示

@@ -493,6 +493,104 @@
                 background: rgba(244, 67, 54, 0.2);
             }
         }
+
+        /* 修改错题序号的样式 */
+        .wrong-questions-list {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            padding: 8px;
+            font-size: 0.8rem;
+            z-index: 1000;  /* 提高 z-index 确保显示在最上层 */
+            max-width: 200px;
+            white-space: normal;
+            word-wrap: break-word;
+            left: 100%;  /* 添加位置定位 */
+            top: 0;      /* 添加位置定位 */
+            margin-left: 5px;  /* 与错题数量保持一定距离 */
+        }
+
+        .chapter-wrong-count {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;  /* 确保容器大小正确 */
+        }
+
+        /* 添加一个小箭头指示器 */
+        .chapter-wrong-count::after {
+            content: " ↗";  /* 添加一个箭头表示可以查看更多信息 */
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .chapter-wrong-count:hover .wrong-questions-list {
+            display: block;
+        }
+
+        /* 确保在移动端也能正确显示 */
+        @media screen and (max-width: 768px) {
+            .wrong-questions-list {
+                display: none;
+                position: fixed;  /* 改为固定定位 */
+                left: 50% !important;  /* 居中显示 */
+                top: 50% !important;
+                transform: translate(-50%, -50%);
+                right: auto;
+                margin: 0;
+                width: 80%;  /* 设置宽度 */
+                max-width: 300px;
+                background: white;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+                z-index: 2000;  /* 确保显示在最上层 */
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .wrong-questions-list.show {
+                display: block;
+            }
+
+            /* 添加遮罩层样式 */
+            .wrong-list-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1999;
+            }
+
+            .wrong-list-overlay.show {
+                display: block;
+            }
+
+            /* 添加关闭按钮 */
+            .wrong-questions-list::after {
+                content: "×";
+                position: absolute;
+                right: 10px;
+                top: 5px;
+                font-size: 20px;
+                color: #666;
+                cursor: pointer;
+            }
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) and (max-width: 768px) {
+            .wrong-questions-list {
+                background: #2d2d2d;
+                color: #e0e0e0;
+            }
+
+            .wrong-questions-list::after {
+                color: #999;
+            }
+        }
     </style>
 </head>
 <body>
@@ -623,7 +721,7 @@
             Object.keys(questions).forEach(chapter => {
                 const li = document.createElement('li');
                 li.className = 'chapter-item';
-                const progress = userAnswers.chapterProgress[chapter] || { answered: 0, correct: 0 };
+                const progress = userAnswers.chapterProgress[chapter] || { answered: 0, correct: 0, wrongQuestions: [] };
                 const total = questions[chapter].length;
                 const wrongCount = progress.answered - progress.correct;
                 
@@ -631,10 +729,28 @@
                     <div class="chapter-title">${chapter}</div>
                     ${progress.answered > 0 ? `
                         <div class="chapter-progress">${progress.answered}/${total}</div>
-                        ${wrongCount > 0 ? `<div class="chapter-wrong-count">错题: ${wrongCount}</div>` : ''}
+                        ${wrongCount > 0 ? `
+                            <div class="chapter-wrong-count" onclick="event.stopPropagation();">
+                                错题: ${wrongCount}
+                                <div class="wrong-questions-list">
+                                    <h4>错题序号</h4>
+                                    <div style="margin-top: 8px;">
+                                        ${progress.wrongQuestions.join(', ')}
+                                    </div>
+                                    ${window.innerWidth <= 768 ? '<div style="margin-top: 15px; text-align: center; color: #666; font-size: 0.8em;">点击任意处关闭</div>' : ''}
+                                </div>
+                            </div>
+                        ` : ''}
                     ` : ''}
                 `;
-                li.onclick = () => showChapterQuestions(chapter);
+                
+                // 修改点击事件处理
+                li.addEventListener('click', (e) => {
+                    // 检查是否点击了错题数量区域
+                    if (!e.target.closest('.chapter-wrong-count')) {
+                        showChapterQuestions(chapter);
+                    }
+                });
                 
                 if (progress.answered > 0) {
                     li.classList.add('has-answers');
@@ -726,29 +842,33 @@
             userAnswers.answered++;
             document.getElementById('correctAnswers').textContent = userAnswers.answered;
             
-            // 更新正确数
-            if (userAnswer === question.answer) {
-                userAnswers.correct++;
-                document.getElementById('accuracy').textContent = userAnswers.correct;
-            }
-            
             // 更新章节进度
             if (!userAnswers.chapterProgress[chapter]) {
                 userAnswers.chapterProgress[chapter] = {
                     answered: 0,
-                    correct: 0
+                    correct: 0,
+                    wrongQuestions: []
                 };
             }
+            
             userAnswers.chapterProgress[chapter].answered++;
+            
             if (userAnswer === question.answer) {
+                userAnswers.correct++;
                 userAnswers.chapterProgress[chapter].correct++;
+                document.getElementById('accuracy').textContent = userAnswers.correct;
+            } else {
+                // 记录错题序号，确保不重复添加
+                if (!userAnswers.chapterProgress[chapter].wrongQuestions.includes(index + 1)) {
+                    userAnswers.chapterProgress[chapter].wrongQuestions.push(index + 1);
+                }
             }
             
             // 更新导航栏显示
             updateChapterList();
         }
 
-        // 添加更新导航栏的函数
+        // 修改 updateChapterList 函数
         function updateChapterList() {
             const chapterItems = document.querySelectorAll('.chapter-item');
             chapterItems.forEach(item => {
@@ -776,9 +896,29 @@
                         if (!wrongCountDiv) {
                             wrongCountDiv = document.createElement('div');
                             wrongCountDiv.className = 'chapter-wrong-count';
+                            wrongCountDiv.innerHTML = `
+                                错题: ${wrongCount}
+                                <div class="wrong-questions-list">
+                                    <h4>错题序号</h4>
+                                    <div style="margin-top: 8px;">
+                                        ${progress.wrongQuestions.join(', ')}
+                                    </div>
+                                    ${window.innerWidth <= 768 ? '<div style="margin-top: 15px; text-align: center; color: #666; font-size: 0.8em;">点击任意处关闭</div>' : ''}
+                                </div>
+                            `;
                             item.appendChild(wrongCountDiv);
+                        } else {
+                            wrongCountDiv.innerHTML = `
+                                错题: ${wrongCount}
+                                <div class="wrong-questions-list">
+                                    <h4>错题序号</h4>
+                                    <div style="margin-top: 8px;">
+                                        ${progress.wrongQuestions.join(', ')}
+                                    </div>
+                                    ${window.innerWidth <= 768 ? '<div style="margin-top: 15px; text-align: center; color: #666; font-size: 0.8em;">点击任意处关闭</div>' : ''}
+                                </div>
+                            `;
                         }
-                        wrongCountDiv.textContent = `错题: ${wrongCount}`;
                     } else if (wrongCountDiv) {
                         wrongCountDiv.remove();
                     }
@@ -852,6 +992,57 @@
                 // 保存状态到 localStorage
                 localStorage.setItem('judgeCounterSectionHidden', counterSection.classList.contains('hidden'));
             });
+        });
+
+        // 修改移动端错题序号显示处理
+        document.addEventListener('DOMContentLoaded', () => {
+            // 创建遮罩层
+            const overlay = document.createElement('div');
+            overlay.className = 'wrong-list-overlay';
+            document.body.appendChild(overlay);
+
+            // 修改点击事件处理
+            document.addEventListener('click', (e) => {
+                const wrongCount = e.target.closest('.chapter-wrong-count');
+                if (wrongCount) {
+                    e.preventDefault();  // 阻止默认行为
+                    e.stopPropagation();  // 阻止冒泡
+                    
+                    if (window.innerWidth <= 768) {
+                        const wrongList = wrongCount.querySelector('.wrong-questions-list');
+                        wrongList.classList.add('show');
+                        overlay.classList.add('show');
+                        return false;  // 确保不会触发其他事件
+                    }
+                }
+
+                // 处理关闭
+                if (e.target.closest('.wrong-list-overlay') || 
+                    e.target.closest('.wrong-questions-list')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const visibleList = document.querySelector('.wrong-questions-list.show');
+                    if (visibleList) {
+                        visibleList.classList.remove('show');
+                        overlay.classList.remove('show');
+                    }
+                    return false;
+                }
+            }, true);  // 使用捕获阶段
+        });
+
+        // 修改导航链接的点击事件处理
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('.sidebar a');
+            // 确保点击的不是错题数量区域
+            if (link && !e.target.closest('.chapter-wrong-count')) {
+                e.preventDefault();
+                const chapter = link.getAttribute('data-chapter');
+                loadQuestions(chapter);
+                if (window.innerWidth <= 768) {
+                    toggleMenu();
+                }
+            }
         });
     </script>
 </body>
