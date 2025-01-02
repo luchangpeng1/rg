@@ -554,6 +554,23 @@
                 background-color: rgba(100, 181, 246, 0.05);
             }
         }
+
+        /* 在 <style> 标签内添加错题计数样式 */
+        .chapter-wrong-count {
+            color: #f44336;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            background: rgba(244, 67, 54, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .chapter-wrong-count {
+                background: rgba(244, 67, 54, 0.2);
+            }
+        }
     </style>
     <script src="./loadQuestions.js"></script>
 </head>
@@ -625,17 +642,21 @@
             Object.keys(questionsData).forEach(chapterId => {
                 if (questionsData[chapterId] && questionsData[chapterId].length > 0) {
                     const li = document.createElement('li');
-                    const answered = userAnswers.chapterProgress[chapterId]?.answered || 0;
+                    const progress = userAnswers.chapterProgress[chapterId] || { answered: 0, correct: 0 };
                     const total = questionsData[chapterId].length;
+                    const wrongCount = progress.answered - progress.correct;
                     
                     li.innerHTML = `
                         <a href="#${chapterId}" data-chapter="${chapterId}">
                             <span>${chapterTitles[chapterId] || chapterId}</span>
-                            ${answered > 0 ? `<span class="chapter-progress">${answered}/${total}</span>` : ''}
+                            ${progress.answered > 0 ? `
+                                <span class="chapter-progress">${progress.answered}/${total}</span>
+                                ${wrongCount > 0 ? `<span class="chapter-wrong-count">错题: ${wrongCount}</span>` : ''}
+                            ` : ''}
                         </a>
                     `;
                     
-                    if (answered > 0) {
+                    if (progress.answered > 0) {
                         li.querySelector('a').classList.add('has-answers');
                     }
                     nav.appendChild(li);

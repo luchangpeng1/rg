@@ -477,6 +477,22 @@
                 background: rgba(45, 45, 45, 0.98);
             }
         }
+
+        .chapter-wrong-count {
+            color: #f44336;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            background: rgba(244, 67, 54, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .chapter-wrong-count {
+                background: rgba(244, 67, 54, 0.2);
+            }
+        }
     </style>
 </head>
 <body>
@@ -607,16 +623,20 @@
             Object.keys(questions).forEach(chapter => {
                 const li = document.createElement('li');
                 li.className = 'chapter-item';
-                const answered = userAnswers.chapterProgress[chapter]?.answered || 0;
+                const progress = userAnswers.chapterProgress[chapter] || { answered: 0, correct: 0 };
                 const total = questions[chapter].length;
+                const wrongCount = progress.answered - progress.correct;
                 
                 li.innerHTML = `
                     <div class="chapter-title">${chapter}</div>
-                    ${answered > 0 ? `<div class="chapter-progress">${answered}/${total}</div>` : ''}
+                    ${progress.answered > 0 ? `
+                        <div class="chapter-progress">${progress.answered}/${total}</div>
+                        ${wrongCount > 0 ? `<div class="chapter-wrong-count">错题: ${wrongCount}</div>` : ''}
+                    ` : ''}
                 `;
                 li.onclick = () => showChapterQuestions(chapter);
                 
-                if (answered > 0) {
+                if (progress.answered > 0) {
                     li.classList.add('has-answers');
                 }
                 chapterList.appendChild(li);
@@ -738,6 +758,9 @@
                     const total = questions[chapterTitle].length;
                     item.classList.add('has-answers');
                     
+                    // 计算错题数量
+                    const wrongCount = progress.answered - progress.correct;
+                    
                     // 更新或创建进度显示
                     let progressDiv = item.querySelector('.chapter-progress');
                     if (!progressDiv) {
@@ -746,6 +769,19 @@
                         item.appendChild(progressDiv);
                     }
                     progressDiv.textContent = `${progress.answered}/${total}`;
+                    
+                    // 添加错题数量显示
+                    let wrongCountDiv = item.querySelector('.chapter-wrong-count');
+                    if (wrongCount > 0) {
+                        if (!wrongCountDiv) {
+                            wrongCountDiv = document.createElement('div');
+                            wrongCountDiv.className = 'chapter-wrong-count';
+                            item.appendChild(wrongCountDiv);
+                        }
+                        wrongCountDiv.textContent = `错题: ${wrongCount}`;
+                    } else if (wrongCountDiv) {
+                        wrongCountDiv.remove();
+                    }
                 }
             });
         }
